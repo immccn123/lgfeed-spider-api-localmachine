@@ -1,0 +1,7 @@
+peewee
+requests
+pymysql
+psycopg2
+colorlog
+fastapi
+uvicorn[standard]
