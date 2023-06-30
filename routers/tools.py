@@ -50,7 +50,8 @@ async def get_heatmap_date(uid: int):
     return [
         {"date": feed.date, "count": feed.count}
         for feed in models.Feed.select(
-            fn.DATE(models.Feed.time).alias("date"),
+            # fn.DATE(models.Feed.time).alias("date"),
+            fn.strftime('%Y-%m-%d', models.Feed.time).alias('date'),
             fn.COUNT(models.Feed.hash).alias("count"),
         )
         .where(models.Feed.user_id == uid)
