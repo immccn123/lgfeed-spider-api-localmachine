@@ -48,11 +48,11 @@ async def who_at_me(username: str):
 @app.get("/tools/heatmap/{uid}")
 async def get_heatmap_date(uid: int):
     return [
+        # FIXME: PGSQL 兼容性
         {"date": feed.date, "count": feed.count}
         for feed in models.Feed.select(
-            # fn.DATE(models.Feed.time).alias("date"),
-            fn.strftime('%Y-%m-%d', models.Feed.time).alias('date'),
-            fn.COUNT(models.Feed.hash).alias("count"),
+            fn.DATE(models.Feed.time).alias("date"),
+            fn.MAX(fn.COUNT(models.Feed.hash)).alias("count"),
         )
         .where(models.Feed.user_id == uid)
         .group_by(fn.DATE(models.Feed.time))
