@@ -23,11 +23,11 @@ async def dragon_king():
         }
         for feed in (
             models.Feed.select(
-                models.Feed.username,
                 models.Feed.user_id,
+                fn.MAX(models.Feed.username).alias("username"),
                 fn.COUNT(models.Feed.content).alias("cnt"),
             )
-            .group_by(models.Feed.user_id)
+            .group_by(models.Feed.user_id, models.Feed.username)
             .where(models.Feed.time >= (current_time + offset))
             .order_by(-fn.COUNT(models.Feed.content).alias("cnt"))
             .limit(100)
