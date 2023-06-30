@@ -1,7 +1,9 @@
-import re
 import datetime
+import re
 
 from fastapi import APIRouter
+from peewee import fn
+
 from db import get_connection, models
 
 db = get_connection()
@@ -41,3 +43,17 @@ async def who_at_me(username: str):
                 )
                 break
     return response
+
+
+@app.get("/tools/heatmap/{uid}")
+async def get_heatmap_date(uid: int):
+    return [
+        {"date": feed.date, "count": feed.count}
+        for feed in models.Feed.select(
+            fn.DATE(models.Feed.time).alias("date"),
+            fn.COUNT(models.Feed.hash).alias("count"),
+        )
+        .where(models.Feed.user_id == uid)
+        .group_by(fn.DATE(models.Feed.time))
+        .order_by(models.Feed.time)
+    ]

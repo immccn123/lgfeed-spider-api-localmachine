@@ -50,7 +50,10 @@ async def tietie():
             models.Feed.user_color,
             models.Feed.content,
         )
-        .where(models.Feed.time >= (current_time + offset))
+        .where(
+            (models.Feed.time >= (current_time + offset))
+            & models.Feed.content.contains("贴贴")
+        )
         .order_by(models.Feed.time)
     ):
         if "贴贴" in feed.content.split("||")[0]:
@@ -87,7 +90,10 @@ async def be_notificated():
             models.Feed.user_id,
             models.Feed.content,
         )
-        .where(models.Feed.time >= (current_time + offset))
+        .where(
+            (models.Feed.time >= (current_time + offset))
+            & models.Feed.content.contains("@")
+        )
         .order_by(models.Feed.time)
     ):
         parts = re.findall(r"\[(\S+)\]\(/user/(\d+)\)", feed.content)
@@ -124,7 +130,10 @@ async def notificate_others():
             models.Feed.user_id,
             models.Feed.content,
         )
-        .where(models.Feed.time >= (current_time + offset))
+        .where(
+            (models.Feed.time >= (current_time + offset))
+            & models.Feed.content.contains("@")
+        )
         .order_by(models.Feed.time)
     ):
         parts = re.findall(r"\[(\S+)\]\(/user/(\d+)\)", feed.content)
