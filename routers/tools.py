@@ -1,0 +1,43 @@
+import re
+import datetime
+
+from fastapi import APIRouter
+from db import get_connection, models
+
+db = get_connection()
+
+app = APIRouter()
+
+
+@app.get("/tools/at/{username}")
+async def who_at_me(username: str):
+    current_time = datetime.datetime.now()
+    offset = datetime.timedelta(days=-1)
+    response = []
+    for feed in (
+        models.Feed.select(
+            models.Feed.username,
+            models.Feed.user_color,
+            models.Feed.content,
+            models.Feed.time,
+            models.Feed.grub_time,
+        )
+        .where(
+            (models.Feed.content.contains(username))
+            & (models.Feed.time >= current_time + offset)
+        )
+        .order_by(-models.Feed.time)
+    ):
+        parts = re.findall(r"\[(\S+)\]\(/user/(\d+)\)", feed.content)
+        for tp in parts:
+            if tp[0].lower() == username.lower():
+                response.append(
+                    {
+                        "name": feed.username,
+                        "time": feed.time,
+                        "content": feed.content,
+                        "grab_time": feed.grub_time,
+                    }
+                )
+                break
+    return response
