@@ -20,7 +20,7 @@ async def get_history_feed():
     total_user = models.Feed.select().group_by(models.Feed.user_id).count()
 
     today_user = (
-        models.Feed.select()
+        models.Feed.select(models.Feed.id)
         .group_by(models.Feed.user_id)
         .where(models.Feed.time >= date_before)
         .count()
