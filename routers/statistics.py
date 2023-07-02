@@ -2,6 +2,7 @@ import datetime
 
 from fastapi import APIRouter
 from db import get_connection, models
+from peewee import fn
 
 db = get_connection()
 
@@ -17,7 +18,7 @@ async def get_history_feed():
     date_before = datetime.datetime.now() + datetime.timedelta(days=-1)
     today = models.Feed.select().where(models.Feed.time >= date_before).count()
 
-    total_user = models.Feed.select().group_by(models.Feed.user_id).count()
+    total_user = models.Feed.select(fn.COUNT(models.Feed.user_id)).group_by(models.Feed.user_id).count()
 
     today_user = (
         models.Feed.select(models.Feed.id)
