@@ -38,4 +38,3 @@ class Feed(Model):
 if not Feed.table_exists():
     logger.critical("Table 'feed' not found. Aborting.")
     sys.exit(1)
-
