@@ -64,14 +64,15 @@ async def tietie():
         user_color[feed.user_id] = feed.user_color
     user_count = sorted(user_count.items(), key=lambda kv: (kv[1], kv[0]), reverse=True)
     for rank in enumerate(user_count):
-        response.append(
-            {
-                "uid": rank[1][0],
-                "count": rank[1][1],
-                "name": usernames[rank[1][0]],
-                "color": user_color[rank[1][0]],
-            }
-        )
+        if rank[1][1] >= 5:
+            response.append(
+                {
+                    "uid": rank[1][0],
+                    "count": rank[1][1],
+                    "name": usernames[rank[1][0]],
+                    "color": user_color[rank[1][0]],
+                }
+            )
         if len(response) >= 100:
             break
     return response
