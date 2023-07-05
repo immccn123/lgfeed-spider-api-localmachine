@@ -158,7 +158,7 @@ async def notificate_others():
     return response
 
 @app.get("/rank/csbzbsyy")
-async def notificate_others():
+async def chengshibuzubaoshiyouyu():
     current_time = datetime.datetime.now()
     offset = datetime.timedelta(days=-30)
     user_count = {}
@@ -169,29 +169,32 @@ async def notificate_others():
         models.Feed.select(
             models.Feed.username,
             models.Feed.user_id,
+            models.Feed.user_color,
             models.Feed.content,
         )
         .where(
-            models.Feed.content.contains("成事不足败事有余")
+            (models.Feed.time >= (current_time + offset))
+            & models.Feed.content.contains("成事不足败事有余")
         )
         .order_by(models.Feed.time)
     ):
-        parts = re.findall(r"\[(\S+)\]\(/user/(\d+)\)", feed.content)
-        if user_count.get(feed.user_id) is None:
-            user_count[feed.user_id] = 0
-        user_count[feed.user_id] += len(parts)
+        if "成事不足败事有余" in feed.content.split("||")[0]:
+            if user_count.get(feed.user_id) is None:
+                user_count[feed.user_id] = 0
+            user_count[feed.user_id] += 1
         usernames[feed.user_id] = feed.username
         user_color[feed.user_id] = feed.user_color
     user_count = sorted(user_count.items(), key=lambda kv: (kv[1], kv[0]), reverse=True)
     for rank in enumerate(user_count):
-        response.append(
-            {
-                "uid": rank[1][0],
-                "count": rank[1][1],
-                "name": usernames[rank[1][0]],
-                "color": user_color[rank[1][0]],
-            }
-        )
+        if rank[1][1] >= 5:
+            response.append(
+                {
+                    "uid": rank[1][0],
+                    "count": rank[1][1],
+                    "name": usernames[rank[1][0]],
+                    "color": user_color[rank[1][0]],
+                }
+            )
         if len(response) >= 100:
             break
     return response
