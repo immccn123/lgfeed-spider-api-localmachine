@@ -13,6 +13,7 @@ async def get_history_feed(uid: int, per_page: int = 100, page: int = 1):
     current_color = "Unknown"
     for feed in (
         models.Feed.select(
+            models.Feed.id,
             models.Feed.username,
             models.Feed.user_color,
             models.Feed.content,
@@ -27,6 +28,7 @@ async def get_history_feed(uid: int, per_page: int = 100, page: int = 1):
         current_color = feed.user_color
         response.append(
             {
+                "id": feed.id,
                 "name": feed.username,
                 "time": feed.time,
                 "content": feed.content,
