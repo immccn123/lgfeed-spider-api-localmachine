@@ -18,7 +18,9 @@ async def who_at_me(username: str):
     response = []
     for feed in (
         models.Feed.select(
+            models.Feed.id,
             models.Feed.username,
+            models.Feed.user_id,
             models.Feed.user_color,
             models.Feed.content,
             models.Feed.time,
@@ -35,10 +37,12 @@ async def who_at_me(username: str):
             if tp[0].lower() == username.lower():
                 response.append(
                     {
+                        "id": feed.id,
+                        "uid": feed.user_id,
                         "name": feed.username,
                         "time": feed.time,
-                        "content": feed.content,
                         "grab_time": feed.grub_time,
+                        "content": feed.content,
                     }
                 )
                 break

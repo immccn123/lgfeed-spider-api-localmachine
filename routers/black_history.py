@@ -39,7 +39,7 @@ async def get_history_feed(uid: int, per_page: int = 100, page: int = 1):
 
 
 @app.get("/blackHistory/usernames/{uid}")
-async def get_history_username(uid: int):
+async def get_history_username_by_uid(uid: int):
     response = []
     is_visit = {}
     for feed in models.Feed.select(
@@ -52,7 +52,7 @@ async def get_history_username(uid: int):
 
 
 @app.get("/blackHistory/uids/{username}")
-async def get_history_username_from(username: str):
+async def get_history_uid_by_username(username: str):
     response = []
     is_visit = {}
     for feed in models.Feed.select(
