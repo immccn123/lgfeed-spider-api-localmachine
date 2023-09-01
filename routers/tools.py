@@ -123,12 +123,12 @@ async def search(
     return [
         {
             "id": result.id,
-            "username": result.username,
-            "user_id": result.user_id,
+            "name": result.username,
+            "uid": result.user_id,
             "user_color": result.user_color,
             "content": result.content,
             "time": result.time,
-            "grub_time": result.grub_time,
+            "grab_time": result.grub_time,
         }
         for result in results
     ]
