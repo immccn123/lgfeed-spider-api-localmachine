@@ -87,7 +87,7 @@ async def get_feed_date(feed_id: int, response: Response):
 @app.get("/tools/search")
 async def search(
     keyword: Annotated[Union[str, None], Query()] = None,
-    senders: Annotated[Union[list[int], None], Query()] = None,
+    senders: Union[list[int], None] = Query(default=None),
     date_after: Annotated[
         Union[datetime.datetime, None], Query()
     ] = None,  # UTC Time Stamp (sec) or ISO 8601 || 2008-09-15T15:53:00+05:00
