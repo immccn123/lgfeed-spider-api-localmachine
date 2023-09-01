@@ -1,10 +1,13 @@
 import datetime
 import re
 
-from fastapi import APIRouter, Response
+from fastapi import APIRouter, Response, Query
 from peewee import fn
 
 from db import get_connection, models
+
+from typing import Union
+from typing_extensions import Annotated
 
 db = get_connection()
 
@@ -77,5 +80,55 @@ async def get_feed_date(feed_id: int, response: Response):
             "content": feed.content,
         }
     except models.Feed.DoesNotExist:
-        response.status_code = 202
+        response.status_code = 404
         return {"detail": "Feed not found"}
+
+
+@app.get("/tools/search")
+async def search(
+    keyword: Annotated[Union[str, None], Query()] = None,
+    senders: Annotated[Union[list[int], None], Query()] = None,
+    date_after: Annotated[
+        Union[datetime.datetime, None], Query()
+    ] = None,  # UTC Time Stamp (sec) or ISO 8601 || 2008-09-15T15:53:00+05:00
+    date_before: Annotated[Union[datetime.datetime, None], Query()] = None,
+    id_after: Annotated[int, Query()] = 0,  # Result not includes id_after
+    per_page: Annotated[int, Query(gt=0)] = 50,
+):
+    query = models.Feed.select(
+        models.Feed.id,
+        models.Feed.username,
+        models.Feed.user_id,
+        models.Feed.user_color,
+        models.Feed.content,
+        models.Feed.time,
+        models.Feed.grub_time,
+    )
+
+    if keyword:
+        query = query.where(models.Feed.content.contains(keyword))
+
+    if senders:
+        query = query.where(models.Feed.user_id.in_(senders))
+
+    if date_after:
+        query = query.where(models.Feed.time >= date_after)
+
+    if date_before:
+        query = query.where(models.Feed.time <= date_before)
+
+    query = query.where(models.Feed.id > id_after)
+    results = query.limit(per_page)
+
+    return [
+        {
+            "id": result.id,
+            "username": result.username,
+            "user_id": result.user_id,
+            "user_color": result.user_color,
+            "content": result.content,
+            "time": result.time,
+            "grub_time": result.grub_time,
+        }
+        for result in results
+    ]
