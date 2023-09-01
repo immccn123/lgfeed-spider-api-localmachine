@@ -118,7 +118,7 @@ async def search(
         query = query.where(models.Feed.time <= date_before)
 
     query = query.where(models.Feed.id > id_after)
-    results = query.limit(per_page)
+    results = query.limit(per_page).order_by(-models.Feed.id)
 
     return [
         {
