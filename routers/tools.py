@@ -92,6 +92,9 @@ async def search(
         Union[datetime.datetime, None], Query()
     ] = None,  # UTC Time Stamp (sec) or ISO 8601 || 2008-09-15T15:53:00+05:00
     date_before: Annotated[Union[datetime.datetime, None], Query()] = None,
+    id_before: Annotated[
+        Union[int, None], Query()
+    ] = None,  # Result not includes id_before
     id_after: Annotated[int, Query()] = 0,  # Result not includes id_after
     per_page: Annotated[int, Query(gt=0)] = 50,
 ):
@@ -116,6 +119,9 @@ async def search(
 
     if date_before:
         query = query.where(models.Feed.time <= date_before)
+
+    if id_before:
+        query = query.where(models.Feed.id < id_before)
 
     query = query.where(models.Feed.id > id_after)
     results = query.limit(per_page).order_by(-models.Feed.id)
