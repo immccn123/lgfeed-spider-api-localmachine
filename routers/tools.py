@@ -138,3 +138,26 @@ async def search(
         }
         for result in results
     ]
+
+
+@app.post("/tools/collection")
+async def get_collection(feed_ids: List[int]):
+    query = models.Feed.select().where(models.Feed.id.in_(feed_ids))
+    results = query.dicts()
+
+    ordered_results = sorted(results, key=lambda item: feed_ids.index(item['id']))
+
+    formatted_results = [
+        {
+            "id": result["id"],
+            "name": result["username"],
+            "uid": result["user_id"],
+            "user_color": result["user_color"],
+            "content": result["content"],
+            "time": result["time"],
+            "grab_time": result["grub_time"]
+        }
+        for result in ordered_results
+    ]
+
+    return formatted_results
