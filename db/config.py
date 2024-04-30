@@ -3,7 +3,7 @@
 """
 
 import sys
-from peewee import SqliteDatabase, OperationalError
+from peewee import SqliteDatabase, OperationalError, PostgresqlDatabase
 from tools.logger import HandleLog
 
 logger = HandleLog()
