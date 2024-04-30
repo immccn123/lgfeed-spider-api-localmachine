@@ -13,13 +13,4 @@ app = FastAPI(
     redoc_url=None,
 )
 
-
-@app.middleware("http")
-async def auth(request: Request, call_next):
-    if request.headers.get("X-LGF-Auth") != "ImkenHaomeng":
-        return Response(status_code=403)
-    response = await call_next(request)
-    return response
-
-
 app.include_router(routes)
