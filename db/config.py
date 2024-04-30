@@ -13,7 +13,7 @@ logger.info("connecting database......")
 def get_connection():
     """获取一个数据库连接。"""
     try:
-        db = SqliteDatabase("feed.db")
+        # db = SqliteDatabase("feed.db")
         # db = MySQLDatabase(
         #     "u933163999_lgfeed",
         #     host="82.180.152.175",
@@ -22,14 +22,11 @@ def get_connection():
         #     charset="utf8mb4",
         #     port=3306,
         # )
-        # db = PostgresqlDatabase(
-        #     'lgfeed',
-        #     thread_safe=True,
-        #     # thread_safe=False,
-        #     autorollback=False,
-        #     # user='immccn123',
-        #     # host='localhost',
-        # )
+        db = PostgresqlDatabase(
+            'lgfeed',
+            thread_safe=True,
+            autorollback=False,
+        )
         # db = MySQLDatabase(
         #     "luogu_feed",
         #     host="sh-cynosdbmysql-grp-5hkhuwxc.sql.tencentcdb.com",
